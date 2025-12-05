@@ -1673,16 +1673,23 @@ def switch_to_user():
 @app.route("/admin/delete_user/<string:email>", methods=["POST"])
 @login_required
 def delete_user(email):
+    # Only allow admin to delete
     if current_user.role != "admin":
         abort(403)
 
     user = User.query.get_or_404(email)
 
-    # Prevent admin self-delete
+    # Prevent an admin from deleting themselves
     if user.email == current_user.email:
         flash("You cannot delete your own admin account.", "danger")
         return redirect(url_for("admin_dashboard"))
 
+    # Prevent deleting another admin
+    if user.role == "admin":
+        flash("Admin accounts cannot be deleted.", "danger")
+        return redirect(url_for("admin_dashboard"))
+
+    # Delete normal users only
     db.session.delete(user)
     db.session.commit()
 
