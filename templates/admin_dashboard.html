@@ -55,6 +55,14 @@
                     <td class="action-buttons">
                         <a href="{{ url_for('profile_page', email=user.email, readonly=1, from_dashboard=1, next=request.path) }}" 
                         class="btn btn-info">View</a>
+
+                        <!-- Delete button -->
+                        <form action="{{ url_for('delete_user', email=user.email) }}" method="POST" style="display:inline;">
+                            <button type="submit" class="btn delete-btn"
+                                    onclick="return confirm('Are you sure you want to delete this user?');">
+                                Delete
+                            </button>
+                        </form>
                     </td>
                 </tr>
                 {% endfor %}

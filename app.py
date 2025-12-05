@@ -1668,6 +1668,26 @@ def switch_to_user():
     # Redirect to the main posts page
     return redirect(url_for('posts'))
 
+# done by Khaw Pei Qi (StudentID: 243FC2456P)
+# route to delete user
+@app.route("/admin/delete_user/<string:email>", methods=["POST"])
+@login_required
+def delete_user(email):
+    if current_user.role != "admin":
+        abort(403)
+
+    user = User.query.get_or_404(email)
+
+    # Prevent admin self-delete
+    if user.email == current_user.email:
+        flash("You cannot delete your own admin account.", "danger")
+        return redirect(url_for("admin_dashboard"))
+
+    db.session.delete(user)
+    db.session.commit()
+
+    flash("User deleted successfully.", "success")
+    return redirect(url_for("admin_dashboard"))
 
 
 # Run app
